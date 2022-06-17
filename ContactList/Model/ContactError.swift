@@ -12,6 +12,7 @@ enum ContactError: LocalizedError {
     case creationError(Error)
     case fetchPostError(Error)
     case ckError(Error)
+    case deletionError(Error)
     
     var localizedDescription: String {
         switch self {
@@ -23,6 +24,8 @@ enum ContactError: LocalizedError {
             return "Error fetching posts \(error)"
         case .ckError(let error):
             return "CKError: \(error)"
+        case .deletionError(let error):
+            return "Error deleting record \(error)"
         }
     }
 }

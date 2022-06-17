@@ -44,14 +44,14 @@ class ContactController {
     }
     
     func fetchPostOperation( completion: @escaping (Result<[Contact], ContactError>) -> Void) {
-        print("hi")
+        
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: ContactKeys.typeKey, predicate: predicate)
         var operation = CKQueryOperation(query: query)
         
         var fetchedContacts: [Contact] = []
         
-        print("1")
+        
         
         operation.recordMatchedBlock = {(_, result) in
             switch result {
@@ -85,7 +85,25 @@ class ContactController {
                 return completion(.failure(.fetchPostError(error)))
             }
         }
-        print("2")
+        
         self.privateDB.add(operation)
     }
+    
+    func delete(contact: Contact, completion: @escaping (Result<Bool, ContactError>) -> Void) {
+        let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: [contact.recordID])
+        
+        operation.modifyRecordsResultBlock = { result in
+            switch result {
+            case .success():
+                print("record successfully deleted")
+                completion(.success(true))
+            case .failure(let error):
+                completion(.failure(.deletionError(error)))
+            }
+        }
+        privateDB.add(operation)
+    }
+    
+    
+    
 } //End of Class

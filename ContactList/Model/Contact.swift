@@ -20,11 +20,13 @@ class Contact {
     var name: String
     var phoneNumber: String?
     var email: String?
+    var recordID: CKRecord.ID
     
-    init (phoneNumber: String?, name: String, email: String?) {
+    init (phoneNumber: String?, name: String, email: String?, recordID: CKRecord.ID = CKRecord.ID(recordName: UUID().uuidString)) {
         self.email = email
         self.phoneNumber = phoneNumber
         self.name = name
+        self.recordID = recordID
     }
 }
 
@@ -34,7 +36,7 @@ extension Contact {
         let phoneNumber = ckRecord[ContactKeys.phoneNumberKey] as? String
         let email = ckRecord[ContactKeys.emailKey] as? String
         
-        self.init(phoneNumber: phoneNumber, name: name, email: email)
+        self.init(phoneNumber: phoneNumber, name: name, email: email, recordID: ckRecord.recordID)
     }
 }
 
@@ -52,4 +54,10 @@ extension CKRecord {
         }
         self.setValuesForKeys(recordKVP)
     }
+}
+
+extension Contact: Equatable {}
+
+func ==(lhs: Contact, rhs: Contact ) -> Bool {
+    return lhs.recordID == rhs.recordID
 }
