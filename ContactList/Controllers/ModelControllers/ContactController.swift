@@ -62,7 +62,7 @@ class ContactController {
                     return completion(.failure(.invalidContactDecodingFromRecord))
                 }
             case .failure(let error):
-                return completion(.failure(.fetchPostError(error)))
+                return completion(.failure(.fetchContactError(error)))
             }
         }
         
@@ -82,7 +82,7 @@ class ContactController {
                     return completion(.success(fetchedContacts))
                 }
             case .failure(let error):
-                return completion(.failure(.fetchPostError(error)))
+                return completion(.failure(.fetchContactError(error)))
             }
         }
         
@@ -102,6 +102,50 @@ class ContactController {
             }
         }
         privateDB.add(operation)
+    }
+    
+    func modify(contact: Contact, completion: @escaping (Result<Bool, ContactError>) -> Void) {
+        
+        checkFor(contact: contact) { result in
+            switch result {
+            case .success(let record):
+                let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
+                operation.modifyRecordsResultBlock = { result in
+                    switch result {
+                    case .success(_):
+                        print("contact modified")
+                        completion(.success(true))
+                    case .failure(let error):
+                        completion(.failure(.modifyError(error)))
+                    }
+                }
+                self.privateDB.add(operation)
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
+        
+
+    }
+    
+    func checkFor(contact: Contact, completion: @escaping (Result<CKRecord, ContactError>) -> Void) {
+        
+        privateDB.fetch(withRecordID: contact.recordID) { record, error in
+            if let error = error {
+                completion(.failure(.fetchContactError(error)))
+            }
+            
+            if let record = record {
+                return completion(.success(record))
+            } else {
+                completion(.failure(.invalidContactDecodingFromRecord))
+            }
+        }
+        
+       
+        
+        
     }
     
     

@@ -8,7 +8,7 @@
 import UIKit
 
 class ContactDetailViewController: UIViewController {
-
+    
     //MARK: - Properties
     
     @IBOutlet var saveButton: UIBarButtonItem!
@@ -60,13 +60,42 @@ class ContactDetailViewController: UIViewController {
         }
     }
     @IBAction func savebuttonTapped(_ sender: Any) {
-        // run the postControllers modify or save function
+        
         
         guard let name = nameTextField.text else {return}
         
+        
         if let contact = contact {
-            //run modify function
-        } else {
+            
+            contact.phoneNumber = phoneNumberTextField.text
+            contact.email = emailTextField.text
+            contact.name = name
+            
+            ContactController.shared.modify(contact: contact) { result in
+                
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let success):
+                        if success {
+                            
+                            if let index = ContactController.shared.contacts.firstIndex(of: contact) {
+                                self.navigationController?.popViewController(animated: true)
+                                ContactController.shared.contacts[index].email = contact.email
+                                ContactController.shared.contacts[index].phoneNumber = contact.phoneNumber
+                                ContactController.shared.contacts[index].name = contact.name
+                            }
+                        } else {
+                            
+                        }
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+            }
+        }
+        
+        
+        else {
             ContactController.shared.createContact(name: name,
                                                    email: emailTextField.text,
                                                    phoneNumber: phoneNumberTextField.text)

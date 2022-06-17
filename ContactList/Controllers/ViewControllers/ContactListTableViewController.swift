@@ -40,10 +40,6 @@ class ContactListTableViewController: UITableViewController {
                 }
             }
         }
-        
-        
-        
-        
     }
     
     

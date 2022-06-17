@@ -10,9 +10,11 @@ import Foundation
 enum ContactError: LocalizedError {
     case invalidContactDecodingFromRecord
     case creationError(Error)
-    case fetchPostError(Error)
+    case fetchContactError(Error)
     case ckError(Error)
     case deletionError(Error)
+    case modifyError(Error)
+    
     
     var localizedDescription: String {
         switch self {
@@ -20,12 +22,14 @@ enum ContactError: LocalizedError {
             return "Contact could not be decoded from record"
         case .creationError(let error):
             return "Error saving new contact: \(error)"
-        case .fetchPostError(let error):
-            return "Error fetching posts \(error)"
+        case .fetchContactError(let error):
+            return "Error fetching contact: \(error)"
         case .ckError(let error):
             return "CKError: \(error)"
         case .deletionError(let error):
-            return "Error deleting record \(error)"
+            return "Error deleting record: \(error)"
+        case .modifyError(let error):
+            return "Error modifying record: \(error)"
         }
     }
 }
